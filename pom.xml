@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>com.wzp</groupId>
-    <artifactId>cloud</artifactId>
+    <artifactId>SpringCloud</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>cloudDemo</name>
