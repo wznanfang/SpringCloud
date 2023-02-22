@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @ContentRowHeight(20)
 @HeadRowHeight(20)
 @ColumnWidth(25)
-public class LoginLogData {
+public class LoginLogExcel {
 
     @ExcelProperty("序号")
     private Integer id;

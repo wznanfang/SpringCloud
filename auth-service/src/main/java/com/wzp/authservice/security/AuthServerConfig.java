@@ -39,7 +39,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
-                .tokenStore(tokenStore())  //配置令牌存储模式
+                .tokenStore(tokenStore())
                 .authenticationManager(authenticationManager);
     }
 

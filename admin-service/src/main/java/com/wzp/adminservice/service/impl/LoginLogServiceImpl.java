@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wzp.adminservice.dao.LoginLog;
 import com.wzp.adminservice.es.LoginLogEs;
-import com.wzp.adminservice.excel.LoginLogData;
+import com.wzp.adminservice.excel.LoginLogExcel;
 import com.wzp.adminservice.mapper.LoginLogMapper;
 import com.wzp.adminservice.repository.LoginLogRepository;
 import com.wzp.adminservice.service.LoginLogService;
@@ -33,10 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Administrator
@@ -103,18 +99,18 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             Long totalNum = loginLogRepository.countAllByUsernameLike(loginLogVO.getUsername());
             long number = (totalNum % EXCEL_ROWS) > 0 ? (totalNum / EXCEL_ROWS) + 1 : (totalNum / EXCEL_ROWS);
             int count = 0;
-            List<LoginLogData> data = new ArrayList<>();
+            List<LoginLogExcel> data = new ArrayList<>();
             for (int i = 0; i <= number - 1; i++) {
                 System.out.println(i);
                 //查询数据
                 List<LoginLogEs> list = loginLogRepository.findAllByUsernameLike(loginLogVO.getUsername(), PageRequest.of(i, EXCEL_ROWS));
                 list.forEach(loginLog -> {
-                    data.add(new LoginLogData(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
+                    data.add(new LoginLogExcel(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
                 });
                 //count控制插入哪一个sheet
                 count += list.size();
                 Integer sheet = (count % EXCEL_SHEET_ROW) > 0 ? (count / EXCEL_SHEET_ROW) + 1 : (count / EXCEL_SHEET_ROW);
-                WriteSheet writeSheet = EasyExcel.writerSheet(sheet, "数据" + sheet).head(LoginLogData.class).build();
+                WriteSheet writeSheet = EasyExcel.writerSheet(sheet, "数据" + sheet).head(LoginLogExcel.class).build();
                 excelWriter.write(data, writeSheet);
                 data.clear();
             }
@@ -142,18 +138,18 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
             //查询满足条件的总条数,根据数据总数据量和每次拿的数据量计算出需要拿几次数据（设定一百万数据存放一个sheet）
             long number = 100L;
             int count = 0;
-            List<LoginLogData> data = new ArrayList<>();
+            List<LoginLogExcel> data = new ArrayList<>();
             for (int i = 0; i <= number - 1; i++) {
                 System.out.println(i);
                 //查询数据
                 List<LoginLogEs> list = loginLogRepository.findAllByUsernameLike(loginLogVO.getUsername(), PageRequest.of(i, 20000));
                 list.forEach(loginLog -> {
-                    data.add(new LoginLogData(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
+                    data.add(new LoginLogExcel(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
                 });
                 //count控制插入哪一个sheet
                 count += list.size();
                 Integer sheet = (count % EXCEL_SHEET_ROW) > 0 ? (count / EXCEL_SHEET_ROW) + 1 : (count / EXCEL_SHEET_ROW);
-                WriteSheet writeSheet = EasyExcel.writerSheet(sheet, "数据" + sheet).head(LoginLogData.class).build();
+                WriteSheet writeSheet = EasyExcel.writerSheet(sheet, "数据" + sheet).head(LoginLogExcel.class).build();
                 excelWriter.write(data, writeSheet);
                 data.clear();
             }

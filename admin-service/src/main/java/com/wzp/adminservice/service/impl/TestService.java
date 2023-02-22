@@ -3,7 +3,7 @@ package com.wzp.adminservice.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.wzp.adminservice.config.CustomConfig;
 import com.wzp.adminservice.es.LoginLogEs;
-import com.wzp.adminservice.excel.LoginLogData;
+import com.wzp.adminservice.excel.LoginLogExcel;
 import com.wzp.adminservice.repository.LoginLogRepository;
 import com.wzp.adminservice.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class TestService {
     public void threadExcel(HttpServletResponse response) throws InterruptedException {
         initQueue();
         try {
-            List<LoginLogData> data = new ArrayList<>();
+            List<LoginLogExcel> data = new ArrayList<>();
             CountDownLatch cdl = new CountDownLatch(queue.size());
             while (queue.size() > 0) {
                 executeAsyncTask(queue.poll(), cdl, data);
@@ -85,16 +85,16 @@ public class TestService {
     }
 
     @Async("taskExecutor")
-    public void executeAsyncTask(Map<String, Object> map, CountDownLatch cdl, List<LoginLogData> data) {
+    public void executeAsyncTask(Map<String, Object> map, CountDownLatch cdl, List<LoginLogExcel> data) {
         int page = (int) map.get("page");
         int size = (int) map.get("limit");
         try {
             List<LoginLogEs> list = loginLogRepository.findAllByUsernameLike("nf", PageRequest.of(page, size));
             list.forEach(loginLog -> {
-                data.add(new LoginLogData(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
+                data.add(new LoginLogExcel(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
             });
             String filepath = map.get("path").toString() + map.get("page") + ".xlsx";
-            EasyExcel.write(filepath, LoginLogData.class).sheet("模板").doWrite(data);
+            EasyExcel.write(filepath, LoginLogExcel.class).sheet("模板").doWrite(data);
             data.clear();
         } catch (Exception e) {
             e.printStackTrace();
