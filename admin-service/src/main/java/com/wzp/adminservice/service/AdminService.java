@@ -15,15 +15,5 @@ public interface AdminService extends IService<Admin> {
 
     Admin findByUsername(String username);
 
-    Map login(LoginVO loginVO);
-
-    /**
-     * 新增用户
-     *
-     * @param addVO
-     */
-    void add(AdminAddVO addVO);
-
-
 
 }

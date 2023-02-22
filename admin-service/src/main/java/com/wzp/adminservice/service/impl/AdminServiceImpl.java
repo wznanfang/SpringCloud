@@ -27,17 +27,4 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
 
-    @Override
-    public Map login(LoginVO loginVO) {
-
-        return null;
-    }
-
-
-    @Override
-    public void add(AdminAddVO addVO) {
-
-    }
-
-
 }
