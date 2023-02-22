@@ -126,43 +126,6 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
 
-    @Override
-    public void loginLogBatchExcel(LoginLogVO loginLogVO, HttpServletResponse response) throws UnsupportedEncodingException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        String fileName = URLEncoder.encode("登录日志.xlsx", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
-        ExcelWriter excelWriter = null;
-        try {
-            excelWriter = EasyExcel.write(response.getOutputStream()).build();
-            //查询满足条件的总条数,根据数据总数据量和每次拿的数据量计算出需要拿几次数据（设定一百万数据存放一个sheet）
-            long number = 100L;
-            int count = 0;
-            List<LoginLogExcel> data = new ArrayList<>();
-            for (int i = 0; i <= number - 1; i++) {
-                System.out.println(i);
-                //查询数据
-                List<LoginLogEs> list = loginLogRepository.findAllByUsernameLike(loginLogVO.getUsername(), PageRequest.of(i, 20000));
-                list.forEach(loginLog -> {
-                    data.add(new LoginLogExcel(loginLog.getId(), loginLog.getUsername(), loginLog.getLoginTime(), loginLog.getCreateTime(), loginLog.getUpdateTime()));
-                });
-                //count控制插入哪一个sheet
-                count += list.size();
-                Integer sheet = (count % EXCEL_SHEET_ROW) > 0 ? (count / EXCEL_SHEET_ROW) + 1 : (count / EXCEL_SHEET_ROW);
-                WriteSheet writeSheet = EasyExcel.writerSheet(sheet, "数据" + sheet).head(LoginLogExcel.class).build();
-                excelWriter.write(data, writeSheet);
-                data.clear();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (excelWriter != null) {
-                excelWriter.finish();
-            }
-        }
-    }
-
-
 }
 
 

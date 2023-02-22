@@ -45,21 +45,10 @@ public class LoginLogController {
      */
     @GetMapping("/excelExport")
     public void excelExport(LoginLogVO loginLogVO, HttpServletResponse response) throws IOException {
+        //        testService.threadExcel(response);
         loginLogService.loginLogExcel(loginLogVO, response);
     }
 
-    @Autowired
-    private TestService testService;
-
-    @GetMapping("batchExcelExport")
-    public void easyExcelDownload(LoginLogVO loginLogVO, HttpServletResponse response) throws UnsupportedEncodingException {
-        StopWatch stopWatch = new StopWatch("任务的耗时");
-        stopWatch.start();
-//        testService.threadExcel(response);
-        loginLogService.loginLogBatchExcel(loginLogVO, response);
-        stopWatch.stop();
-        System.out.println(stopWatch.getTotalTimeMillis());
-    }
 
 
 }

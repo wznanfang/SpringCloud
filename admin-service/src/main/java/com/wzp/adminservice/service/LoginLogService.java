@@ -19,7 +19,5 @@ public interface LoginLogService extends IService<LoginLog> {
 
     void loginLogExcel(LoginLogVO loginLogVO, HttpServletResponse response) throws UnsupportedEncodingException;
 
-    void loginLogBatchExcel(LoginLogVO loginLogVO, HttpServletResponse response) throws UnsupportedEncodingException;
-
 
 }
