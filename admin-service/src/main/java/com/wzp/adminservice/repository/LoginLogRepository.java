@@ -1,20 +1,28 @@
 package com.wzp.adminservice.repository;
 
-import com.wzp.adminservice.es.LoginLog;
+import com.wzp.adminservice.es.LoginLogEs;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.util.List;
 
-/**
- * @author zp.wei
- * @date 2021/6/28 15:34
- */
+public interface LoginLogRepository extends ElasticsearchRepository<LoginLogEs, String> {
 
-public interface LoginLogRepository extends ElasticsearchRepository<LoginLog, String> {
-
+    /**
+     * 查询满足条件的总条数
+     *
+     * @param username
+     * @return
+     */
     Long countAllByUsernameLike(String username);
 
-    List<LoginLog> findAllByUsernameLike(String username, Pageable pageable);
+    /**
+     * 分页查询满足条件的数据
+     *
+     * @param username
+     * @param pageable
+     * @return
+     */
+    List<LoginLogEs> findAllByUsernameLike(String username, Pageable pageable);
 
 }

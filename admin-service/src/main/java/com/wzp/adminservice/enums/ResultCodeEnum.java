@@ -19,6 +19,10 @@ public enum ResultCodeEnum {
     USER_HAS_EXIST(false, 10002, "用户已存在"),
     USER_ERROR(false, 10003, "用户不存在"),
     ERROR_USERNAME_OR_PASSWORD(false, 10004, "账户名或密码错误"),
+
+    EXCEL_EXPORT_FAIL(true, 20001, "excel导出失败"),
+    EXCEL_DOWNLAND_FAIL(false, 20002, "excel下载失败，请重新下载"),
+
     ;
 
 

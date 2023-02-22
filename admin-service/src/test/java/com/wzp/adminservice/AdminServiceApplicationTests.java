@@ -1,16 +1,16 @@
 package com.wzp.adminservice;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wzp.adminservice.es.LoginLog;
+import com.wzp.adminservice.dao.LoginLog;
 import com.wzp.adminservice.repository.LoginLogRepository;
+import com.wzp.adminservice.service.LoginLogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.util.StopWatch;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.*;
 
 @SpringBootTest
 class AdminServiceApplicationTests {
@@ -18,6 +18,9 @@ class AdminServiceApplicationTests {
 
     @Autowired
     private LoginLogRepository loginLogRepository;
+    @Autowired
+    private LoginLogService loginLogService;
+
 
     @Test
     void contextLoads() {
@@ -26,15 +29,59 @@ class AdminServiceApplicationTests {
 
     @Test
     void findAll() {
-        /*Pageable pageable = PageRequest.of(0, 10);
-        Page<LoginLog> page = loginLogRepository.findAll(pageable);
-        page.getContent().forEach(book -> {
-            System.out.println(book);
-        });*/
-        List<LoginLog> list = loginLogRepository.findAllByUsernameLike("nf",PageRequest.of(0, 10));
-        System.out.println(JSONObject.toJSON(list));
-
-
+//        List<LoginLog> list = loginLogRepository.findAllByUsernameLike("nf", PageRequest.of(0, 10));
+//        System.out.println(JSONObject.toJSON(list));
+        Instant start = Instant.parse("2022-02-20T00:00:00.000Z");
+        Instant end = Instant.now().plusMillis(TimeUnit.SECONDS.toMillis(8));
+        System.out.println(between(start, end));
     }
+
+
+    public static Instant between(Instant start, Instant end) {
+        long startSeconds = start.getEpochSecond();
+        long endSeconds = end.getEpochSecond();
+        long random = ThreadLocalRandom.current().nextLong(startSeconds, endSeconds);
+        return Instant.ofEpochSecond(random);
+    }
+
+
+    @Test
+    void test2() {
+        StopWatch sw = new StopWatch("任务的耗时");
+        sw.start();
+        Instant start = Instant.parse("2022-02-20T00:00:00.000Z");
+        Instant end = Instant.now().plusMillis(TimeUnit.SECONDS.toMillis(8));
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 16, 3, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.CallerRunsPolicy());
+        for (int i = 0; i < 3334; i++) {
+            List<LoginLog> list = new ArrayList<>();
+            for (int j = 0; j < 3000; j++) {
+                LoginLog loginLog = new LoginLog();
+                loginLog.setAdminId(9);
+                loginLog.setUsername("nflj1234");
+                loginLog.setLoginTime(Date.from(between(start, end)));
+                list.add(loginLog);
+            }
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    loginLogService.saveBatch(list);
+                    System.out.println(Thread.currentThread().getName());
+                }
+            };
+            executor.execute(runnable);
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+        sw.stop();
+        System.out.println(sw.getTotalTimeMillis());
+    }
+
+
+
+
+
+
 
 }
