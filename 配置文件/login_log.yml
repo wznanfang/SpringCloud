@@ -1,0 +1,17 @@
+dataSourceKey: defaultDS # 源数据源的key, 对应上面配置的srcDataSources中的值
+destination: example  # canal的instance或者MQ的topic
+groupId: g1 # 对应MQ模式下的groupId, 只会同步对应groupId的数据
+esMapping:
+  _index: login_log # es 的索引名称
+  _id: _id  # es 的_id, 如果不配置该项必须配置下面的pk项_id则会由es自动分配
+  sql: "SELECT
+          ll.id as _id,
+          ll.admin_id as adminId,
+          ll.username as username,
+          ll.login_time as loginTime,
+          ll.create_time as createTime,
+          ll.update_time as updateTime
+        FROM
+          login_log ll"
+  etlCondition: "where ll.updateTime>={}"
+  commitBatch: 3000

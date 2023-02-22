@@ -1,0 +1,7 @@
+nacos：.\startup.cmd -m standalone
+zookeeper：bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+kafka：bin\windows\kafka-server-start.bat config\server.properties
+canal-deployer：bin目录下 执行 ./startup.bat
+canal.adapter：bin目录下执行 ./startup.bat
+es: bin目录下执行 ./elasticsearch.bat
+kibana: bin目录下执行 ./kibana.bat
